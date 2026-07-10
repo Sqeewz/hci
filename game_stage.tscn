@@ -1,0 +1,505 @@
+[gd_scene load_steps=22 format=3 uid="uid://cm3xpxqkv4yl6"]
+
+[ext_resource type="Script" path="res://game_stage.gd" id="1_game_stage"]
+[ext_resource type="Script" path="res://level_graphics.gd" id="2_level_graphics"]
+[ext_resource type="Script" path="res://character.gd" id="3_character"]
+[ext_resource type="Script" path="res://command_card.gd" id="4_command_card"]
+[ext_resource type="Script" path="res://queue_scroll.gd" id="5_queue_scroll"]
+[ext_resource type="Shader" path="res://retro_filter.gdshader" id="6_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_retro"]
+shader = ExtResource("6_shader")
+shader_parameter/pixel_size = 2.0
+shader_parameter/color_depth = 64.0
+shader_parameter/scanline_strength = 0.06
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_deck_bg"]
+bg_color = Color(0.06, 0.07, 0.1, 0.92)
+border_width_top = 3
+border_color = Color(0.2, 0.45, 0.8, 0.6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctrl_btn_normal"]
+bg_color = Color(0.12, 0.15, 0.2, 0.6)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.4, 0.5, 0.6)
+content_margin_left = 15.0
+content_margin_right = 15.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctrl_btn_hover"]
+bg_color = Color(0.18, 0.22, 0.3, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.6, 0.8, 1.0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctrl_btn_pressed"]
+bg_color = Color(0.08, 0.1, 0.14, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.3, 0.4, 0.8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_run"]
+bg_color = Color(0.15, 0.18, 0.22, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.5, 0.55, 0.65, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_run_hover"]
+bg_color = Color(0.22, 0.26, 0.32, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.7, 0.75, 0.85, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_jump"]
+bg_color = Color(0.1, 0.2, 0.35, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.2, 0.5, 0.85, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_jump_hover"]
+bg_color = Color(0.15, 0.28, 0.48, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.3, 0.7, 1.0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_slide"]
+bg_color = Color(0.32, 0.18, 0.08, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.75, 0.4, 0.15, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_slide_hover"]
+bg_color = Color(0.42, 0.25, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.95, 0.55, 0.2, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_duck"]
+bg_color = Color(0.3, 0.25, 0.08, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.7, 0.6, 0.15, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_duck_hover"]
+bg_color = Color(0.4, 0.33, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.9, 0.8, 0.2, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_climb"]
+bg_color = Color(0.08, 0.26, 0.16, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.2, 0.6, 0.35, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_climb_hover"]
+bg_color = Color(0.12, 0.35, 0.22, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 5
+border_color = Color(0.3, 0.8, 0.5, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_back"]
+bg_color = Color(0.14, 0.1, 0.12, 0.7)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.8, 0.3, 0.3, 0.8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_back_hover"]
+bg_color = Color(0.25, 0.14, 0.18, 0.9)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1.0, 0.4, 0.4, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_run"]
+bg_color = Color(0.08, 0.25, 0.22, 0.8)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.8, 0.6, 0.8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_run_hover"]
+bg_color = Color(0.12, 0.35, 0.3, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.3, 1.0, 0.7, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_win_panel"]
+bg_color = Color(0.05, 0.08, 0.06, 0.96)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.25, 0.85, 0.45, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lose_panel"]
+bg_color = Color(0.08, 0.05, 0.05, 0.96)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.85, 0.25, 0.25, 1)
+
+[node name="GameStage" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_game_stage")
+
+[node name="SplitScreen" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="GameView" type="Control" parent="SplitScreen"]
+custom_minimum_size = Vector2(0, 350)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LevelGraphics" type="Node2D" parent="SplitScreen/GameView"]
+script = ExtResource("2_level_graphics")
+
+[node name="Character" type="Node2D" parent="SplitScreen/GameView"]
+position = Vector2(80, 250)
+script = ExtResource("3_character")
+
+[node name="DeckArea" type="PanelContainer" parent="SplitScreen"]
+custom_minimum_size = Vector2(0, 412)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_deck_bg")
+
+[node name="Margin" type="MarginContainer" parent="SplitScreen/DeckArea"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 22
+
+[node name="Layout" type="VBoxContainer" parent="SplitScreen/DeckArea/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="HBoxContainer" parent="SplitScreen/DeckArea/Margin/Layout"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="SplitScreen/DeckArea/Margin/Layout/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.75, 1.0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0.4, 0.8, 0.2)
+theme_override_constants/shadow_outline_size = 8
+theme_override_font_sizes/font_size = 18
+text = "PROGRAM TIMELINE"
+
+[node name="Spacer" type="Control" parent="SplitScreen/DeckArea/Margin/Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ClearButton" type="Button" parent="SplitScreen/DeckArea/Margin/Layout/Header"]
+custom_minimum_size = Vector2(140, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 0.95, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+text = "  CLEAR TIMELINE"
+
+[node name="ResetButton" type="Button" parent="SplitScreen/DeckArea/Margin/Layout/Header"]
+custom_minimum_size = Vector2(120, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 0.95, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+text = "  RESET PLAYER"
+
+[node name="QueueScroll" type="ScrollContainer" parent="SplitScreen/DeckArea/Margin/Layout"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+vertical_scroll_mode = 0
+script = ExtResource("5_queue_scroll")
+
+[node name="QueueContainer" type="HBoxContainer" parent="SplitScreen/DeckArea/Margin/Layout/QueueScroll"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="DeckTitle" type="Label" parent="SplitScreen/DeckArea/Margin/Layout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.6, 0.7, 1)
+theme_override_font_sizes/font_size = 13
+text = "SELECT OR DRAG ACTIONS TO BUILD RUNNER SEQUENCE:"
+
+[node name="Deck" type="HBoxContainer" parent="SplitScreen/DeckArea/Margin/Layout"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 22
+
+[node name="WaitCard" type="Control" parent="SplitScreen/DeckArea/Margin/Layout/Deck"]
+custom_minimum_size = Vector2(115, 140)
+layout_mode = 2
+script = ExtResource("4_command_card")
+command_name = "WAIT"
+card_color = Color(0.9, 0.55, 0.25, 1)
+desc_text = "WAIT FOR TIMING"
+
+[node name="JumpCard" type="Control" parent="SplitScreen/DeckArea/Margin/Layout/Deck"]
+custom_minimum_size = Vector2(115, 140)
+layout_mode = 2
+script = ExtResource("4_command_card")
+command_name = "JUMP"
+card_color = Color(0.2, 0.6, 0.95, 1)
+desc_text = "LEAP HIGH IN AIR"
+
+[node name="SlideCard" type="Control" parent="SplitScreen/DeckArea/Margin/Layout/Deck"]
+custom_minimum_size = Vector2(115, 140)
+layout_mode = 2
+script = ExtResource("4_command_card")
+command_name = "SLIDE"
+card_color = Color(0.85, 0.5, 0.15, 1)
+desc_text = "LOW FLOOR GLIDE"
+
+[node name="DuckCard" type="Control" parent="SplitScreen/DeckArea/Margin/Layout/Deck"]
+custom_minimum_size = Vector2(115, 140)
+layout_mode = 2
+script = ExtResource("4_command_card")
+command_name = "DUCK"
+card_color = Color(0.9, 0.8, 0.15, 1)
+desc_text = "CROUCH TO EVADE"
+
+[node name="ClimbCard" type="Control" parent="SplitScreen/DeckArea/Margin/Layout/Deck"]
+custom_minimum_size = Vector2(115, 140)
+layout_mode = 2
+script = ExtResource("4_command_card")
+command_name = "CLIMB"
+card_color = Color(0.25, 0.8, 0.5, 1)
+desc_text = "PULL OVER WALLS"
+
+[node name="ControlBar" type="HBoxContainer" parent="SplitScreen/DeckArea/Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="BackButton" type="Button" parent="SplitScreen/DeckArea/Margin/Layout/ControlBar"]
+custom_minimum_size = Vector2(180, 46)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.75, 0.75, 1)
+theme_override_colors/font_hover_color = Color(1, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_back")
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_back_hover")
+text = "  < BACK TO MENU"
+
+[node name="SettingsButton" type="Button" parent="SplitScreen/DeckArea/Margin/Layout/ControlBar"]
+custom_minimum_size = Vector2(150, 46)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+text = "  ⚙️ SETTINGS"
+
+[node name="RunButton" type="Button" parent="SplitScreen/DeckArea/Margin/Layout/ControlBar"]
+custom_minimum_size = Vector2(250, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.95, 0.9, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_run")
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_run_hover")
+text = "  RUN SEQUENCE AUTOMATICALLY >"
+
+[node name="WinOverlay" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.03, 0.05, 0.75)
+
+[node name="Panel" type="PanelContainer" parent="WinOverlay"]
+custom_minimum_size = Vector2(560, 480)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -240.0
+offset_right = 280.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_win_panel")
+
+[node name="Margin" type="MarginContainer" parent="WinOverlay/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 35
+theme_override_constants/margin_top = 35
+theme_override_constants/margin_right = 35
+theme_override_constants/margin_bottom = 35
+
+[node name="Layout" type="VBoxContainer" parent="WinOverlay/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="WinOverlay/Panel/Margin/Layout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.95, 0.5, 1)
+theme_override_colors/font_shadow_color = Color(0, 0.8, 0.3, 0.3)
+theme_override_constants/shadow_outline_size = 12
+theme_override_font_sizes/font_size = 32
+text = "🏆 ESCAPE SUCCESSFUL"
+horizontal_alignment = 1
+
+[node name="Desc" type="Label" parent="WinOverlay/Panel/Margin/Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Outstanding! The student successfully dodged all obstacles and escaped the collapsed high school hallway ruins!"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Spacer" type="Control" parent="WinOverlay/Panel/Margin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RetryButton" type="Button" parent="WinOverlay/Panel/Margin/Layout"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "PLAY AGAIN"
+
+[node name="MenuButton" type="Button" parent="WinOverlay/Panel/Margin/Layout"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "BACK TO MENU"
+
+[node name="LoseOverlay" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.03, 0.05, 0.75)
+
+[node name="Panel" type="PanelContainer" parent="LoseOverlay"]
+custom_minimum_size = Vector2(520, 360)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -180.0
+offset_right = 260.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lose_panel")
+
+[node name="Margin" type="MarginContainer" parent="LoseOverlay/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 35
+theme_override_constants/margin_top = 35
+theme_override_constants/margin_right = 35
+theme_override_constants/margin_bottom = 35
+
+[node name="Layout" type="VBoxContainer" parent="LoseOverlay/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="LoseOverlay/Panel/Margin/Layout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.3, 0.3, 1)
+theme_override_colors/font_shadow_color = Color(0.8, 0.1, 0.1, 0.3)
+theme_override_constants/shadow_outline_size = 12
+theme_override_font_sizes/font_size = 32
+text = "⚠️ ESCAPE FAILED"
+horizontal_alignment = 1
+
+[node name="ReasonLabel" type="Label" parent="LoseOverlay/Panel/Margin/Layout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.75, 0.75, 1)
+theme_override_font_sizes/font_size = 15
+text = "The corridor collapsed before you could reach the exit gate."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Spacer" type="Control" parent="LoseOverlay/Panel/Margin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RetryButton" type="Button" parent="LoseOverlay/Panel/Margin/Layout"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "RETRY SEQUENCE"
+
+[node name="MenuButton" type="Button" parent="LoseOverlay/Panel/Margin/Layout"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "BACK TO MENU"
+
+[node name="RetroFilterLayer" type="CanvasLayer" parent="."]
+layer = 120
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="RetroFilterLayer"]
+copy_mode = 2
+
+[node name="FilterRect" type="ColorRect" parent="RetroFilterLayer"]
+material = SubResource("ShaderMaterial_retro")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
