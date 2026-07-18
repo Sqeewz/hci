@@ -166,21 +166,21 @@ func _ready() -> void:
 		_on_back_pressed()
 	)
 	
-	# Hook hover arrow cursor indicators
-	run_btn.mouse_entered.connect(func(): run_btn.text = "> RUN SEQUENCE AUTOMATICALLY >")
-	run_btn.mouse_exited.connect(func(): run_btn.text = "  RUN SEQUENCE AUTOMATICALLY >")
+	# Hook hover font color highlights (preserves layout width!)
+	run_btn.mouse_entered.connect(func(): run_btn.add_theme_color_override("font_color", Color(0.3, 1.0, 0.7)))
+	run_btn.mouse_exited.connect(func(): run_btn.remove_theme_color_override("font_color"))
 	
-	clear_btn.mouse_entered.connect(func(): clear_btn.text = "> CLEAR TIMELINE")
-	clear_btn.mouse_exited.connect(func(): clear_btn.text = "  CLEAR TIMELINE")
+	clear_btn.mouse_entered.connect(func(): clear_btn.add_theme_color_override("font_color", Color(1.0, 0.6, 0.4)))
+	clear_btn.mouse_exited.connect(func(): clear_btn.remove_theme_color_override("font_color"))
 	
-	reset_btn.mouse_entered.connect(func(): reset_btn.text = "> RESET PLAYER")
-	reset_btn.mouse_exited.connect(func(): reset_btn.text = "  RESET PLAYER")
+	reset_btn.mouse_entered.connect(func(): reset_btn.add_theme_color_override("font_color", Color(1.0, 0.6, 0.4)))
+	reset_btn.mouse_exited.connect(func(): reset_btn.remove_theme_color_override("font_color"))
 	
-	back_btn.mouse_entered.connect(func(): back_btn.text = "> < BACK TO SELECTION")
-	back_btn.mouse_exited.connect(func(): back_btn.text = "  < BACK TO SELECTION")
+	back_btn.mouse_entered.connect(func(): back_btn.add_theme_color_override("font_color", Color(1.0, 0.5, 0.5)))
+	back_btn.mouse_exited.connect(func(): back_btn.remove_theme_color_override("font_color"))
 	
-	settings_btn.mouse_entered.connect(func(): settings_btn.text = "> ⚙️ SETTINGS")
-	settings_btn.mouse_exited.connect(func(): settings_btn.text = "  ⚙️ SETTINGS")
+	settings_btn.mouse_entered.connect(func(): settings_btn.add_theme_color_override("font_color", Color(0.4, 0.8, 1.0)))
+	settings_btn.mouse_exited.connect(func(): settings_btn.remove_theme_color_override("font_color"))
 	
 	reset_game()
 func _input(event: InputEvent) -> void:
@@ -574,10 +574,16 @@ func show_cutscene_dialogue(slides_data: Array, on_complete: Callable = Callable
 			cutscene_is_typing = false
 		)
 		
-		# Sound effect trigger without camera/position shake
+		# Earthquake screen shake on Slide 2
 		if slide.get("shake", false):
-			SoundManager.play_sfx("fail")
-			bg.position = Vector2.ZERO
+			SoundManager.play_sfx("fail") # plays deep chiptune rumble buzz
+			var shake_tween = create_tween()
+			var amp := 18.0
+			var step := 0.04
+			for i in range(10):
+				var offset = Vector2(randf_range(-amp, amp), randf_range(-amp, amp))
+				shake_tween.tween_property(bg, "position", offset, step)
+			shake_tween.tween_property(bg, "position", Vector2.ZERO, step)
 			
 	# Init slide 0
 	show_slide.call(0)
