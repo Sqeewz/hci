@@ -74,6 +74,9 @@ func _process(delta: float) -> void:
 	
 	queue_redraw()
 
+func get_draw_width() -> float:
+	return maxf(1600.0, get_viewport_rect().size.x + 300.0)
+
 func get_theme_name() -> String:
 	if current_level <= 8:
 		return "SCHOOL"
@@ -84,12 +87,13 @@ func get_theme_name() -> String:
 
 func _draw() -> void:
 	var theme = get_theme_name()
+	var w = get_draw_width()
 	
 	# Draw background sky & structures based on theme
 	match theme:
 		"SCHOOL":
 			# Dark slate background
-			draw_rect(Rect2(0, 0, 1380, 350), Color(0.06, 0.07, 0.1))
+			draw_rect(Rect2(0, 0, w, 350), Color(0.06, 0.07, 0.1))
 			
 			# Class windows
 			for i in range(6):
@@ -118,7 +122,7 @@ func _draw() -> void:
 			for y in range(0, 350, 10):
 				var ratio = float(y) / 350.0
 				var sky_color = Color(0.08, 0.05, 0.12).lerp(Color(0.24, 0.1, 0.08), ratio)
-				draw_rect(Rect2(0, y, 1380, 10), sky_color, true)
+				draw_rect(Rect2(0, y, w, 10), sky_color, true)
 				
 			# Ruined skyscraper silhouettes
 			var bld_color = Color(0.04, 0.03, 0.06)
@@ -143,7 +147,7 @@ func _draw() -> void:
 			for y in range(0, 350, 10):
 				var ratio = float(y) / 350.0
 				var forest_sky = Color(0.02, 0.04, 0.03).lerp(Color(0.08, 0.12, 0.06), ratio)
-				draw_rect(Rect2(0, y, 1380, 10), forest_sky, true)
+				draw_rect(Rect2(0, y, w, 10), forest_sky, true)
 				
 			# Draw massive tree silhouettes and hanging branches
 			var tree_color = Color(0.02, 0.03, 0.02)
@@ -170,8 +174,8 @@ func _draw() -> void:
 			pit_cell = cell
 			break
 			
-	var gap_start = START_X + (pit_cell - 0.5) * CELL_WIDTH if pit_cell != -1 else 1380.0
-	var gap_end = START_X + (pit_cell + 0.5) * CELL_WIDTH if pit_cell != -1 else 1380.0
+	var gap_start = START_X + (pit_cell - 0.5) * CELL_WIDTH if pit_cell != -1 else w
+	var gap_end = START_X + (pit_cell + 0.5) * CELL_WIDTH if pit_cell != -1 else w
 	
 	var floor_color = Color(0.14, 0.16, 0.22)
 	var floor_line_color = Color(0.3, 0.45, 0.6, 0.6)
@@ -239,14 +243,14 @@ func _draw() -> void:
 					draw_line(Vector2(sx + 12, GROUND_Y + 55), Vector2(sx + 8, GROUND_Y + 70), Color(0.25, 0.5, 0.25), 1.5)
 					
 	# Floor segment 2: After Pit
-	if gap_end < 1380.0:
-		draw_rect(Rect2(gap_end, GROUND_Y + 40, 1380 - gap_end, 110), floor_color, true)
-		draw_line(Vector2(gap_end, GROUND_Y + 40), Vector2(1380, GROUND_Y + 40), floor_line_color, 4.0)
+	if gap_end < w:
+		draw_rect(Rect2(gap_end, GROUND_Y + 40, w - gap_end, 110), floor_color, true)
+		draw_line(Vector2(gap_end, GROUND_Y + 40), Vector2(w, GROUND_Y + 40), floor_line_color, 4.0)
 		if theme == "CITY":
-			for x in range(int(gap_end) + 20, 1380, 60):
+			for x in range(int(gap_end) + 20, int(w), 60):
 				draw_line(Vector2(x, GROUND_Y + 75), Vector2(x + 25, GROUND_Y + 75), Color(0.8, 0.7, 0.1, 0.35), 4.0)
 		elif theme == "FOREST":
-			for x in range(int(gap_end) + 25, 1380, 80):
+			for x in range(int(gap_end) + 25, int(w), 80):
 				draw_circle(Vector2(x, GROUND_Y + 42), 3.0, Color(0.2, 0.45, 0.25, 0.6))
 				draw_line(Vector2(x, GROUND_Y + 42), Vector2(x - 5, GROUND_Y + 32), Color(0.25, 0.55, 0.3, 0.7), 2.0)
 				draw_line(Vector2(x, GROUND_Y + 42), Vector2(x + 4, GROUND_Y + 30), Color(0.25, 0.55, 0.3, 0.7), 1.5)
