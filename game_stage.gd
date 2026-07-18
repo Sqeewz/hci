@@ -22,11 +22,41 @@ var current_level := 1
 var max_levels := 22
 
 static var cutscene_shown := false
+static var boss1_in_shown := false
+static var boss2_in_shown := false
+static var boss3_in_shown := false
 
-@export var cutscene_texts: Array[String] = [
+@export_group("Intro Cutscene Subtitles")
+@export var intro_cutscene_texts: Array[String] = [
 	"ระบบหลักล้มเหลว! ประตูนิรภัยของสถานีรถไฟฟ้าใต้ดินปิดตัวลงแล้ว ฉันต้องหาทางหนีก่อนระบบชัตดาวน์จะขังฉันไว้ที่นี่...",
 	"เส้นทางข้างหน้าเต็มไปด้วยกับดักและหุ่นยนต์สแกนเนอร์ แต่เครื่องแฮกเกอร์แบบคิวคำสั่งสามารถเจาะระบบได้...",
 	"นี่คือโอกาสเดียวของฉัน มีทั้งหมด 22 ด่านกั้นระหว่างฉันกับภายนอก... มาเข้ารหัสเพื่อหนีไปด้วยกัน!"
+]
+
+@export_group("Boss 1 Cutscene Subtitles (Level 8)")
+@export var boss1_in_texts: Array[String] = [
+	"ประตูนิรภัยศูนย์วิจัยโรงเรียนถูกล็อคด้วยรหัสผ่านหลัก! ต้องถอดรหัสเพื่อเปิดประตูมุ่งหน้าสู่เขตเมือง..."
+]
+@export var boss1_out_texts: Array[String] = [
+	"การถอดรหัสสำเร็จ! ระบบความปลอดภัยของโรงเรียนถูกปลดล็อคเรียบร้อยแล้ว...",
+	"เส้นทางใหม่มุ่งหน้าสู่ใจกลางเมืองผุพัง... การผจญภัยในเซกเตอร์ใหม่กำลังจะเริ่มต้นขึ้น!"
+]
+
+@export_group("Boss 2 Cutscene Subtitles (Level 15)")
+@export var boss2_in_texts: Array[String] = [
+	"ระบบระบายความร้อนเตาปฏิกรณ์ของเมืองผุพังกำลังล้มเหลว! ต้องเชื่อมต่อท่อน้ำกู้ระบบก่อนจะเกิดการระเบิดใน 1 นาที..."
+]
+@export var boss2_out_texts: Array[String] = [
+	"กระแสน้ำไหลเวียนสำเร็จ! เตาปฏิกรณ์กลับสู่ภาวะปกติ และเส้นทางเข้าสู่ป่าลึกถูกเปิดออกแล้ว..."
+]
+
+@export_group("Boss 3 Cutscene Subtitles (Level 22)")
+@export var boss3_in_texts: Array[String] = [
+	"เข้าสู่แกนกลางเมนเฟรมสุดท้ายในป่าลึก! จัดเรียงหอคอยฮานอยเพื่อปลดล็อคประตูทางออกสุดท้าย..."
+]
+@export var boss3_out_texts: Array[String] = [
+	"ในที่สุด ประตูทางออกสุดท้ายก็เปิดออก... แสงสว่างจากโลกภายนอกสาดส่องเข้ามาในศูนย์วิจัยที่มืดมิด...",
+	"การเดินทางอันยาวนานและท้าทายผ่าน 22 ด่านได้สิ้นสุดลง คุณทำภารกิจหลบหนีสำเร็จอย่างสมบูรณ์แบบ!"
 ]
 
 var is_cutscene_active := false
@@ -336,12 +366,24 @@ func reset_game() -> void:
 	update_queue_ui()
 	set_deck_disabled(false)
 	
-	if current_level == 8:
+	if current_level == 8 and not boss1_in_shown:
+		boss1_in_shown = true
+		set_deck_disabled(true)
+		call_deferred("show_boss1_in_cutscene")
+	elif current_level == 8:
 		set_deck_disabled(true)
 		call_deferred("show_boss_level")
+	elif current_level == 15 and not boss2_in_shown:
+		boss2_in_shown = true
+		set_deck_disabled(true)
+		call_deferred("show_boss2_in_cutscene")
 	elif current_level == 15:
 		set_deck_disabled(true)
 		call_deferred("show_pipe_boss_level")
+	elif current_level == 22 and not boss3_in_shown:
+		boss3_in_shown = true
+		set_deck_disabled(true)
+		call_deferred("show_boss3_in_cutscene")
 	elif current_level == 22:
 		set_deck_disabled(true)
 		call_deferred("show_hanoi_boss_level")
@@ -351,8 +393,13 @@ func reset_game() -> void:
 		call_deferred("show_intro_cutscene")
 
 
-func show_intro_cutscene() -> void:
-	# Hide split screen temporarily so runner view doesn't peak through
+func show_cutscene_dialogue(slides_data: Array, on_complete: Callable = Callable()) -> void:
+	if slides_data.is_empty():
+		if on_complete.is_valid():
+			on_complete.call()
+		return
+
+	# Hide split screen temporarily so runner view doesn't peek through
 	$SplitScreen.hide()
 	
 	var cutscene_layer = CanvasLayer.new()
@@ -465,45 +512,46 @@ func show_intro_cutscene() -> void:
 	skip_btn.add_theme_stylebox_override("hover", skip_style_hover)
 	bg.add_child(skip_btn)
 	
-	# Slides array
-	var slides = [
-		{"img": "res://assets/cuts/cut1.png", "text": cutscene_texts[0]},
-		{"img": "res://assets/cuts/cut2.png", "text": cutscene_texts[1]},
-		{"img": "res://assets/cuts/cut3.png", "text": cutscene_texts[2]}
-	]
-	
 	cutscene_current_slide = 0
 	cutscene_is_typing = false
 	cutscene_active_tween = null
 	
 	# Helper to show a slide
 	var show_slide = func(idx: int):
-		if idx >= slides.size():
+		if idx >= slides_data.size():
 			return
 		
-		# 1. Slide fade-in
-		texture_rect.texture = load(slides[idx]["img"])
-		texture_rect.modulate.a = 0.0
-		var fade_in = create_tween()
-		fade_in.tween_property(texture_rect, "modulate:a", 1.0, 0.3)
+		var slide = slides_data[idx]
+		var img_path: String = slide.get("img", "")
+		
+		# 1. Slide fade-in / image display
+		if img_path != "" and ResourceLoader.exists(img_path):
+			texture_rect.show()
+			texture_rect.texture = load(img_path)
+			texture_rect.modulate.a = 0.0
+			var fade_in = create_tween()
+			fade_in.tween_property(texture_rect, "modulate:a", 1.0, 0.3)
+		else:
+			texture_rect.hide()
+			bg.color = Color(0.02, 0.02, 0.03, 1.0) # Dark screen for narration epilogues
 		
 		# 2. Typewriter subtitle effect
-		label.text = slides[idx]["text"]
+		label.text = slide.get("text", "")
 		label.visible_ratio = 0.0
 		cutscene_is_typing = true
 		
 		if cutscene_active_tween:
 			cutscene_active_tween.kill()
 		cutscene_active_tween = create_tween()
-		var duration = float(slides[idx]["text"].length()) * 0.025
+		var duration = float(label.text.length()) * 0.025
 		cutscene_active_tween.tween_property(label, "visible_ratio", 1.0, duration)
 		cutscene_active_tween.finished.connect(func():
 			cutscene_is_typing = false
 		)
 		
-		# 3. Earthquake screen shake on slide 2 (index 1)
-		if idx == 1:
-			SoundManager.play_sfx("fail") # plays deep chiptune rumble buzz
+		# Optional screen shake
+		if slide.get("shake", false):
+			SoundManager.play_sfx("fail")
 			var shake_tween = create_tween()
 			var amp := 20.0
 			var step := 0.04
@@ -521,6 +569,8 @@ func show_intro_cutscene() -> void:
 		cutscene_layer.queue_free()
 		$SplitScreen.show()
 		set_deck_disabled(false)
+		if on_complete.is_valid():
+			on_complete.call()
 		
 	# Define advance callback
 	var advance_cutscene = func():
@@ -534,7 +584,7 @@ func show_intro_cutscene() -> void:
 			# Proceed to next slide
 			SoundManager.play_sfx("click")
 			cutscene_current_slide += 1
-			if cutscene_current_slide < slides.size():
+			if cutscene_current_slide < slides_data.size():
 				show_slide.call(cutscene_current_slide)
 			else:
 				close_cutscene.call()
@@ -547,6 +597,35 @@ func show_intro_cutscene() -> void:
 		SoundManager.play_sfx("click")
 		close_cutscene.call()
 	)
+
+func show_intro_cutscene() -> void:
+	var slides = []
+	for i in range(min(3, intro_cutscene_texts.size())):
+		var img_path = "res://assets/cuts/cut%d.png" % (i + 1)
+		slides.append({
+			"img": img_path,
+			"text": intro_cutscene_texts[i],
+			"shake": (i == 1)
+		})
+	show_cutscene_dialogue(slides)
+
+func show_boss1_in_cutscene() -> void:
+	var slides = []
+	for txt in boss1_in_texts:
+		slides.append({"img": "res://assets/cuts/cutBoss1in.png", "text": txt})
+	show_cutscene_dialogue(slides, func(): show_boss_level())
+
+func show_boss2_in_cutscene() -> void:
+	var slides = []
+	for txt in boss2_in_texts:
+		slides.append({"img": "res://assets/cuts/cutBoss2.png", "text": txt})
+	show_cutscene_dialogue(slides, func(): show_pipe_boss_level())
+
+func show_boss3_in_cutscene() -> void:
+	var slides = []
+	for txt in boss3_in_texts:
+		slides.append({"img": "res://assets/cuts/cutBoss3.png", "text": txt})
+	show_cutscene_dialogue(slides, func(): show_hanoi_boss_level())
 
 func set_deck_disabled(disable: bool) -> void:
 	run_btn.disabled = disable
@@ -1235,12 +1314,17 @@ func handle_boss_win() -> void:
 	await timer.timeout
 	
 	boss_panel.queue_free()
-	$SplitScreen.show() # Restore runner screen
 	
-	current_level = 9
-	LevelManager.selected_level = current_level
-	program_queue.clear()
-	reset_game()
+	var slides = [
+		{"img": "res://assets/cuts/cutBoss1out.png", "text": boss1_out_texts[0] if boss1_out_texts.size() > 0 else ""},
+		{"img": "res://assets/cuts/cut4.png", "text": boss1_out_texts[1] if boss1_out_texts.size() > 1 else ""}
+	]
+	show_cutscene_dialogue(slides, func():
+		current_level = 9
+		LevelManager.selected_level = current_level
+		program_queue.clear()
+		reset_game()
+	)
 
 func _on_clear_pressed() -> void:
 	if is_executing:
@@ -1517,9 +1601,13 @@ func handle_hanoi_win() -> void:
 	await timer.timeout
 	
 	hanoi_panel.queue_free()
-	$SplitScreen.show() # Restore runner screen
 	
-	handle_win()
+	var slides = []
+	for txt in boss3_out_texts:
+		slides.append({"img": "", "text": txt})
+	show_cutscene_dialogue(slides, func():
+		handle_win()
+	)
 
 # Inner class representing the Hanoi game board control
 class HanoiControl extends Control:
@@ -1854,12 +1942,16 @@ func handle_pipe_win() -> void:
 	await timer.timeout
 	
 	pipe_panel.queue_free()
-	$SplitScreen.show() # Restore runner screen
 	
-	current_level = 16
-	LevelManager.selected_level = current_level
-	program_queue.clear()
-	reset_game()
+	var slides = []
+	for txt in boss2_out_texts:
+		slides.append({"img": "res://assets/cuts/cutBoss2o.png", "text": txt})
+	show_cutscene_dialogue(slides, func():
+		current_level = 16
+		LevelManager.selected_level = current_level
+		program_queue.clear()
+		reset_game()
+	)
 
 func handle_pipe_fail() -> void:
 	is_boss_active = false

@@ -117,6 +117,9 @@ func _ready() -> void:
 			var game_stage_script = load("res://game_stage.gd")
 			if game_stage_script:
 				game_stage_script.cutscene_shown = false
+				game_stage_script.boss1_in_shown = false
+				game_stage_script.boss2_in_shown = false
+				game_stage_script.boss3_in_shown = false
 			get_tree().change_scene_to_file("res://game_stage.tscn")
 		)
 	)
