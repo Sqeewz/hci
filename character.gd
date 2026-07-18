@@ -453,12 +453,7 @@ func play_death(death_type: String) -> Tween:
 			fade.tween_property(self, "modulate:a", 0.0, 0.3)
 			
 		"CRUSH":
-			# Shakes from structural rumble, gets crushed flat, turns stone grey, and dissolves
-			var shake_loops := 6
-			var shake := create_tween().set_loops(shake_loops)
-			shake.tween_property(self, "body_offset:x", -5.0, 0.04)
-			shake.tween_property(self, "body_offset:x", 5.0, 0.04)
-			
+			# Gets crushed flat, turns stone grey, and dissolves smoothly
 			death_tween.tween_property(self, "modulate", Color(0.25, 0.25, 0.28), 0.2)
 			death_tween.tween_property(self, "body_scale", Vector2(1.7, 0.22), 0.25).set_trans(Tween.TRANS_BOUNCE)
 			death_tween.tween_property(self, "body_offset:y", 30.0, 0.25)

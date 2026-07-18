@@ -574,16 +574,10 @@ func show_cutscene_dialogue(slides_data: Array, on_complete: Callable = Callable
 			cutscene_is_typing = false
 		)
 		
-		# Optional screen shake
+		# Sound effect trigger without camera/position shake
 		if slide.get("shake", false):
 			SoundManager.play_sfx("fail")
-			var shake_tween = create_tween()
-			var amp := 20.0
-			var step := 0.04
-			for i in range(12):
-				var offset = Vector2(randf_range(-amp, amp), randf_range(-amp, amp))
-				shake_tween.tween_property(bg, "position", offset, step)
-			shake_tween.tween_property(bg, "position", Vector2.ZERO, step)
+			bg.position = Vector2.ZERO
 			
 	# Init slide 0
 	show_slide.call(0)
