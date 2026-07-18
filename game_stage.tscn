@@ -26,7 +26,9 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.3, 0.4, 0.5, 0.6)
 content_margin_left = 15.0
+content_margin_top = 8.0
 content_margin_right = 15.0
+content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctrl_btn_hover"]
 bg_color = Color(0.18, 0.22, 0.3, 0.8)
@@ -35,6 +37,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.4, 0.6, 0.8, 1.0)
+content_margin_left = 15.0
+content_margin_top = 8.0
+content_margin_right = 15.0
+content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctrl_btn_pressed"]
 bg_color = Color(0.08, 0.1, 0.14, 0.9)
@@ -43,6 +49,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.2, 0.3, 0.4, 0.8)
+content_margin_left = 15.0
+content_margin_top = 8.0
+content_margin_right = 15.0
+content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_run"]
 bg_color = Color(0.15, 0.18, 0.22, 1)
@@ -241,17 +251,19 @@ theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
-text = "  CLEAR TIMELINE"
+text = "CLEAR TIMELINE"
+clip_text = true
 
 [node name="ResetButton" type="Button" parent="SplitScreen/DeckArea/Margin/Layout/Header"]
-custom_minimum_size = Vector2(120, 34)
+custom_minimum_size = Vector2(130, 34)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.9, 0.95, 1)
 theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
-text = "  RESET PLAYER"
+text = "RESET PLAYER"
+clip_text = true
 
 [node name="QueueScroll" type="ScrollContainer" parent="SplitScreen/DeckArea/Margin/Layout"]
 custom_minimum_size = Vector2(0, 80)
