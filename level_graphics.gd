@@ -19,7 +19,7 @@ func _ready() -> void:
 	# Initialize ambient dust/ash particles
 	for i in range(25):
 		dust_particles.append({
-			"pos": Vector2(randf_range(0, 1200), randf_range(20, 320)),
+			"pos": Vector2(randf_range(0, 1280), randf_range(20, 320)),
 			"speed": randf_range(10, 30),
 			"angle": randf_range(0, PI * 2),
 			"size": randf_range(1.5, 3.5),
@@ -40,8 +40,8 @@ func _process(delta: float) -> void:
 		p.angle += randf_range(-0.5, 0.5) * delta
 		var dir = Vector2(cos(p.angle), sin(p.angle))
 		p.pos += dir * p.speed * delta
-		if p.pos.x < 0: p.pos.x = 1200
-		if p.pos.x > 1200: p.pos.x = 0
+		if p.pos.x < 0: p.pos.x = 1280
+		if p.pos.x > 1280: p.pos.x = 0
 		if p.pos.y < 0: p.pos.y = 350
 		if p.pos.y > 350: p.pos.y = 0
 		
@@ -89,11 +89,11 @@ func _draw() -> void:
 	match theme:
 		"SCHOOL":
 			# Dark slate background
-			draw_rect(Rect2(0, 0, 1200, 350), Color(0.06, 0.07, 0.1))
+			draw_rect(Rect2(0, 0, 1380, 350), Color(0.06, 0.07, 0.1))
 			
 			# Class windows
-			for i in range(5):
-				var wx = 100 + i * 220
+			for i in range(6):
+				var wx = 80 + i * 220
 				draw_rect(Rect2(wx, 50, 80, 120), Color(0.03, 0.03, 0.05), true)
 				# light ray shafts
 				var light_pts = PackedVector2Array([
@@ -110,7 +110,7 @@ func _draw() -> void:
 			for r in range(7):
 				var y = 20 + r * 45
 				var shift = 25 if r % 2 == 0 else 0
-				for c in range(13):
+				for c in range(15):
 					draw_rect(Rect2(shift + c * 100, y, 60, 20), brick_color, false, 1.0)
 					
 		"CITY":
@@ -118,13 +118,14 @@ func _draw() -> void:
 			for y in range(0, 350, 10):
 				var ratio = float(y) / 350.0
 				var sky_color = Color(0.08, 0.05, 0.12).lerp(Color(0.24, 0.1, 0.08), ratio)
-				draw_rect(Rect2(0, y, 1200, 10), sky_color, true)
+				draw_rect(Rect2(0, y, 1380, 10), sky_color, true)
 				
 			# Ruined skyscraper silhouettes
 			var bld_color = Color(0.04, 0.03, 0.06)
 			var buildings = [
 				[50, 180, 260], [180, 100, 300], [280, 220, 200], [450, 140, 280],
-				[580, 90, 320], [700, 240, 180], [820, 120, 290], [980, 200, 240]
+				[580, 90, 320], [700, 240, 180], [820, 120, 290], [980, 200, 240],
+				[1140, 220, 270], [1320, 150, 310]
 			]
 			for b in buildings:
 				# building rect
@@ -142,16 +143,18 @@ func _draw() -> void:
 			for y in range(0, 350, 10):
 				var ratio = float(y) / 350.0
 				var forest_sky = Color(0.02, 0.04, 0.03).lerp(Color(0.08, 0.12, 0.06), ratio)
-				draw_rect(Rect2(0, y, 1200, 10), forest_sky, true)
+				draw_rect(Rect2(0, y, 1380, 10), forest_sky, true)
 				
 			# Draw massive tree silhouettes and hanging branches
 			var tree_color = Color(0.02, 0.03, 0.02)
 			draw_circle(Vector2(200, -50), 300.0, tree_color) # Foliage left
 			draw_circle(Vector2(1000, -50), 280.0, tree_color) # Foliage right
+			draw_circle(Vector2(1300, -50), 280.0, tree_color) # Foliage far right
 			
 			# Tree trunks
 			draw_rect(Rect2(50, 0, 60, 350), tree_color, true)
 			draw_rect(Rect2(1050, 0, 70, 350), tree_color, true)
+			draw_rect(Rect2(1280, 0, 80, 350), tree_color, true)
 			
 			# Hanging glowing moss/spores
 			for i in range(8):
@@ -167,8 +170,8 @@ func _draw() -> void:
 			pit_cell = cell
 			break
 			
-	var gap_start = START_X + (pit_cell - 0.5) * CELL_WIDTH if pit_cell != -1 else 1200.0
-	var gap_end = START_X + (pit_cell + 0.5) * CELL_WIDTH if pit_cell != -1 else 1200.0
+	var gap_start = START_X + (pit_cell - 0.5) * CELL_WIDTH if pit_cell != -1 else 1380.0
+	var gap_end = START_X + (pit_cell + 0.5) * CELL_WIDTH if pit_cell != -1 else 1380.0
 	
 	var floor_color = Color(0.14, 0.16, 0.22)
 	var floor_line_color = Color(0.3, 0.45, 0.6, 0.6)
@@ -236,14 +239,14 @@ func _draw() -> void:
 					draw_line(Vector2(sx + 12, GROUND_Y + 55), Vector2(sx + 8, GROUND_Y + 70), Color(0.25, 0.5, 0.25), 1.5)
 					
 	# Floor segment 2: After Pit
-	if gap_end < 1200.0:
-		draw_rect(Rect2(gap_end, GROUND_Y + 40, 1200 - gap_end, 110), floor_color, true)
-		draw_line(Vector2(gap_end, GROUND_Y + 40), Vector2(1200, GROUND_Y + 40), floor_line_color, 4.0)
+	if gap_end < 1380.0:
+		draw_rect(Rect2(gap_end, GROUND_Y + 40, 1380 - gap_end, 110), floor_color, true)
+		draw_line(Vector2(gap_end, GROUND_Y + 40), Vector2(1380, GROUND_Y + 40), floor_line_color, 4.0)
 		if theme == "CITY":
-			for x in range(int(gap_end) + 20, 1200, 60):
+			for x in range(int(gap_end) + 20, 1380, 60):
 				draw_line(Vector2(x, GROUND_Y + 75), Vector2(x + 25, GROUND_Y + 75), Color(0.8, 0.7, 0.1, 0.35), 4.0)
 		elif theme == "FOREST":
-			for x in range(int(gap_end) + 25, 1200, 80):
+			for x in range(int(gap_end) + 25, 1380, 80):
 				draw_circle(Vector2(x, GROUND_Y + 42), 3.0, Color(0.2, 0.45, 0.25, 0.6))
 				draw_line(Vector2(x, GROUND_Y + 42), Vector2(x - 5, GROUND_Y + 32), Color(0.25, 0.55, 0.3, 0.7), 2.0)
 				draw_line(Vector2(x, GROUND_Y + 42), Vector2(x + 4, GROUND_Y + 30), Color(0.25, 0.55, 0.3, 0.7), 1.5)

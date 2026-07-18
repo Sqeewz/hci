@@ -502,12 +502,18 @@ func show_cutscene_dialogue(slides_data: Array, on_complete: Callable = Callable
 	box_style.set_corner_radius_all(0)
 	dialogue_panel.add_theme_stylebox_override("panel", box_style)
 	
-	# Skip Button (top-right)
+	# Skip Button (top-right anchored inside screen margin)
 	var skip_btn = Button.new()
 	cutscene_skip_btn = skip_btn
 	skip_btn.text = "  SKIP CINEMATIC >  "
-	skip_btn.custom_minimum_size = Vector2(160, 36)
-	skip_btn.position = Vector2(1280 - 180, 20)
+	skip_btn.anchor_left = 1.0
+	skip_btn.anchor_right = 1.0
+	skip_btn.anchor_top = 0.0
+	skip_btn.anchor_bottom = 0.0
+	skip_btn.offset_left = -210
+	skip_btn.offset_right = -20
+	skip_btn.offset_top = 20
+	skip_btn.offset_bottom = 56
 	skip_btn.mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	var skip_style = StyleBoxFlat.new()
