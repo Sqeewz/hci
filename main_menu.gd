@@ -77,9 +77,14 @@ func _ready() -> void:
 	play_btn.pressed.connect(func():
 		SoundManager.play_sfx("click")
 		_flash_and_execute(play_btn, func():
-			var show_subs = not continue_sub_btn.visible
-			continue_sub_btn.visible = show_subs
-			new_game_sub_btn.visible = show_subs
+			var has_save = LevelManager.has_valid_save()
+			var is_currently_open = continue_sub_btn.visible or new_game_sub_btn.visible
+			if is_currently_open:
+				continue_sub_btn.visible = false
+				new_game_sub_btn.visible = false
+			else:
+				new_game_sub_btn.visible = true
+				continue_sub_btn.visible = has_save # Show Continue only if valid save <= 2 days
 		)
 	)
 	play_btn.mouse_entered.connect(func():
