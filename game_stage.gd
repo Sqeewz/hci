@@ -59,6 +59,25 @@ static var boss3_in_shown := false
 	"การเดินทางอันยาวนานและท้าทายผ่าน 22 ด่านได้สิ้นสุดลง คุณทำภารกิจหลบหนีสำเร็จอย่างสมบูรณ์แบบ!"
 ]
 
+@export_group("End Credits")
+@export_multiline var end_credits_text: String = """
+[ GAME & SYSTEM DESIGN ]
+HCI Project Team
+
+[ VISUAL ART & CUTSCENES ]
+Cyberpunk & Retro Pixel Assets
+
+[ AUDIO & SOUNDTRACK ]
+Faster Lo-Fi, Darksynth Cyberpunk & Tribal Escape
+
+[ SPECIAL THANKS ]
+Human Computer Interaction (HCI)
+
+==============================
+THANK YOU FOR PLAYING!
+==============================
+"""
+
 var is_cutscene_active := false
 var cutscene_on_click_callback: Callable
 var cutscene_skip_btn: Button
@@ -626,6 +645,80 @@ func show_boss3_in_cutscene() -> void:
 	for txt in boss3_in_texts:
 		slides.append({"img": "res://assets/cuts/cutBoss3.png", "text": txt})
 	show_cutscene_dialogue(slides, func(): show_hanoi_boss_level())
+
+func show_end_credits() -> void:
+	# Hide split screen
+	$SplitScreen.hide()
+	
+	var credits_layer = CanvasLayer.new()
+	credits_layer.name = "CreditsLayer"
+	add_child(credits_layer)
+	
+	var bg = ColorRect.new()
+	bg.color = Color(0.02, 0.02, 0.04, 1.0)
+	bg.anchor_right = 1.0
+	bg.anchor_bottom = 1.0
+	bg.offset_right = 0
+	bg.offset_bottom = 0
+	bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	credits_layer.add_child(bg)
+	
+	var center = CenterContainer.new()
+	center.anchor_right = 1.0
+	center.anchor_bottom = 1.0
+	center.offset_right = 0
+	center.offset_bottom = 0
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bg.add_child(center)
+	
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 20)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	center.add_child(vbox)
+	
+	var title = Label.new()
+	title.text = "🏆 ESCAPE COMPLETE 🏆\n--- END CREDITS ---"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))
+	vbox.add_child(title)
+	
+	var credits_lbl = Label.new()
+	credits_lbl.text = end_credits_text
+	credits_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	credits_lbl.add_theme_font_size_override("font_size", 12)
+	credits_lbl.add_theme_color_override("font_color", Color(0.85, 0.9, 1.0))
+	vbox.add_child(credits_lbl)
+	
+	var hint = Label.new()
+	hint.text = "[ CLICK ANYWHERE TO RETURN TO MAIN MENU ]"
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.add_theme_font_size_override("font_size", 10)
+	hint.add_theme_color_override("font_color", Color(0.4, 0.7, 1.0, 0.7))
+	vbox.add_child(hint)
+	
+	# Slow blinking hint effect
+	var blink = create_tween().set_loops()
+	blink.tween_property(hint, "modulate:a", 0.2, 0.8)
+	blink.tween_property(hint, "modulate:a", 1.0, 0.8)
+	
+	SoundManager.play_sfx("win")
+	
+	# Return to main menu callback
+	var is_closing := false
+	var return_to_menu = func():
+		if is_closing:
+			return
+		is_closing = true
+		SoundManager.play_sfx("click")
+		is_cutscene_active = false
+		cutscene_on_click_callback = Callable()
+		get_tree().change_scene_to_file("res://main_menu.tscn")
+		
+	is_cutscene_active = true
+	cutscene_on_click_callback = return_to_menu
+	cutscene_skip_btn = null
 
 func set_deck_disabled(disable: bool) -> void:
 	run_btn.disabled = disable
@@ -1606,7 +1699,7 @@ func handle_hanoi_win() -> void:
 	for txt in boss3_out_texts:
 		slides.append({"img": "", "text": txt})
 	show_cutscene_dialogue(slides, func():
-		handle_win()
+		show_end_credits()
 	)
 
 # Inner class representing the Hanoi game board control
